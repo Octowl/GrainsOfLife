@@ -11,9 +11,6 @@ xdescribe("Grains of Life", function(){
       describe("State", function () {
         it("can be 'alive' or 'dead'")
         it("is 'dead' by default")
-        xit("could have other custom 'alive' states (not by default)", function () {
-          pending();
-        })
       })
       describe("Wave", function () {
         it("outputs when Node is alive")
@@ -51,5 +48,11 @@ xdescribe("Grains of Life", function(){
       it("uses web audio api")
       it("combines the sounds of all nodes")
     })
+  })
+  // wish list is for features that would be cool but aren't for the first round
+  describe("Wish List", function () {
+    it("is multiplayer")
+    it("could have other custom 'alive' states (not by default)")
+    it("can sample an mp3")
   })
 })
