@@ -4,16 +4,16 @@
 <head>
   <meta charset="utf-8">
   <title>Grains of Life</title>
-  <script src="node_modules/angular/angular.js" defer></script>
+  <!-- <script src="node_modules/angular/angular.js" defer></script>
   <script src="table/module.js" defer></script>
-  <script src="table/table.directive.js" defer></script>
+  <script src="table/table.directive.js" defer></script> -->
   <link rel="stylesheet" href="libraries/bootstrap.min.css">
   <link rel="stylesheet" href="game.css">
 </head>
 
 <body ng-app='game'>
   <h2>Game of Life</h2>
-  <board></board>
+  <table id="board"></table>
 
   <div id='control_panel'>
     <button id='step_btn' class='btn btn-success'>Step</button>
@@ -32,7 +32,7 @@
     </div>
   </footer>
 
-  <!-- <script src="game.js"></script> -->
+  <script src="game.js"></script>
 
 </body>
 </html>
