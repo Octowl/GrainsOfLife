@@ -6,8 +6,8 @@ var session = require("express-session");
 
 // PUBLIC ROUTES
   app.use('/app', express.static(__dirname + "/app"))
-  app.use('/files',express.static(__dirname + "/public"))
-  app.use('/files', express.static(__dirname + "/libraries"))
+  app.use('/files/libraries', express.static(__dirname + "/libraries"))
+  app.use('/files', express.static(__dirname + "/public"))
   app.use('/files', express.static(__dirname + "/bower_components"))
   app.use('/files/bootstrap', express.static(__dirname + "/bower_components/bootstrap/dist"))
   app.use('/files/bootstrap/slider', express.static(__dirname + "/bower_components/bootstrap-slider"))

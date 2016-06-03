@@ -15,37 +15,36 @@
       <script src="files/bootstrap/js/bootstrap.js" defer></script>
       <!-- bootstrap slider -->
         <link rel="stylesheet" href="files/bootstrap/slider/slider.css" />
-        <script src="files/bootstrap/slider/bootstrap-slider.js" defer />
+        <script src="files/bootstrap/slider/bootstrap-slider.js" defer></script>
       <!-- timbre -->
-        <script src="files/timbre.js"></script>
+        <script src="files/libraries/timbre.js" defer></script>
 
   <!-- === client app === -->
     <script src="app/module.js" defer></script>
     <script src="app/app.controller.js" defer></script>
+    <script src="app/components/game/game.factory.js" defer></script>
     <script src="app/components/game/grid/table.directive.js" defer></script>
-    <script src="app/game.js" defer></script>
+    <script src="app/components/game/grid/cell/cell.factory.js" defer></script>
+    <script src="app/components/game/controls/buttons/button.directives.js" defer></script>
+    <script src="app/components/game/grid/grid.directive.js" defer></script>
+    <script src="app/components/game/controls/controlPanel/controlPanel.directive.js" defer></script>
     <link rel="stylesheet" href="files/css/game.css">
+    <!-- <script src="app/game.js" defer></script> -->
 
 </head>
 
 <body ng-app="game" ng-controller="app">
   <h2>Game of Life</h2>
-  <table id="board"></table>
+  <game-grid></game-grid>
 
-  <div id='control_panel'>
-    <button id='step_btn' class='btn btn-success'>Step</button>
-    <input id='step_amount' placeholder="Auto Play Speed (ms) " value='600'>
-    <button id='play_btn' class='btn btn-primary'>Play</button>
-    <button id='reset_btn' class='btn btn-warning'>Reset Random</button>
-    <button id='clear_btn' class='btn btn-info'>Clear</button>
-  </div>
+  <control-panel></control-panel>
     <div><input type='file' id='input'></div>
     <button id='submit_file' class='btn btn-info'></button>
   <br><br>
 
   <footer class="footer">
     <div class="container">
-      <p class="text-muted">Built by [me] at <a href="http://www.fullstackacademy.com/">Fullstack Academy</a></p>
+      <p class="text-muted">Contributors: Andrew, Aziz, and John</p>
     </div>
   </footer>
 

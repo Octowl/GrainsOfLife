@@ -1,22 +1,22 @@
 'use strict';
-app.directive("controlPanel", function(){
+game.directive("controlPanel", function(){
   return {
     restrict: "E",
-    template: controlPanelTemplate(),
+    replace: true,
+    template: controlPanelTemplate()
   }
 })
 
 
 function controlPanelTemplate(){
   return `
-  <div name="control-panel" class="container-fluid">
+  <div id="control_panel" class="container-fluid">
     <button name="collapse" class="glyphicon glyphicon-menu-down" />
-    <div class="row"><h3>Controls</h3></div>
-    <div class="row">
-      <h4>Width</h4>
-
-    </div>
-    <div class="row"></div>
+    <step></step>
+    <input id='step_amount' placeholder="Auto Play Speed (ms) " value='600'>
+    <play></play>
+    <reset></reset>
+    <clear></clear>
   </div>
   `
 }
