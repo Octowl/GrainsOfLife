@@ -46,6 +46,8 @@ var pentatonicFrequencies = [
     7040*/
 ];
 
+var color = null
+
 var synth = T("OscGen", (T("reverb", {
         room: 0.95,
         damp: 0.1,
@@ -58,6 +60,7 @@ var gameOfLife = {
     stepInterval: null,
     autoPlayOn: false,
     setIntervalID: 0,
+
 
     createAndShowBoard: function () {
         // create <table> element
@@ -123,9 +126,12 @@ var gameOfLife = {
             if (this.getAttribute('data-status') == 'dead') {
                 this.className = "alive";
                 this.setAttribute('data-status', 'alive');
+                this.setAttribute('style', 'background-color:' + color)
+                // console.log(color)
             } else {
                 this.className = "dead";
                 this.setAttribute('data-status', 'dead');
+                this.setAttribute('style', 'background-color:#FFFFFF')
             }
         };
         this.forEachCell(function (cell) {
@@ -161,6 +167,8 @@ var gameOfLife = {
     // },
 
     step: function () {
+      color = '#'+Math.floor(Math.random()*16777215).toString(16)
+      // console.log(this.color)
         // Here is where you want to loop through all the cells
         // on the board and determine, based on it's neighbors,
         // whether the cell should be dead or alive in the next
@@ -186,6 +194,7 @@ var gameOfLife = {
             boardWidth = this.width,
             boardHeight = this.height
         this.forEachCell(function (cell, x, y) {
+            // console.log(cell)
             var cellObj = new Cell(cell, x, y, cell.dataset.status, 0, 0, boardHeight, boardWidth)
             for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
                 // if (i < 0 || i > boardWidth - 1) continue
@@ -202,6 +211,14 @@ var gameOfLife = {
         })
 
         var sines = [];
+
+      //   var cssRuleCode = document.all ? 'rules' : 'cssRules'; //account for IE and FF
+      //   var rule = document.styleSheets[1][cssRuleCode];
+      //   document.styleSheets[1].insertRule('td.alive' + ' {'+'background-color'+':'+
+      // '#'+Math.floor(Math.random()*16777215).toString(16) +'}', 1)
+        // var selector = rule.selectorText;  //maybe '#tId'
+        // console.log(selector)
+        // var value = rule.value;            //both selectorText and value are settable
 
         cells.forEach(function (cellObj) {
             if (cellObj.status === 'alive') {
