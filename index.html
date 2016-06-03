@@ -13,12 +13,12 @@
 </head>
 
 <body ng-app='game'>
-  <h2>Game of Life</h2>
+  <h2>Grains of Life</h2>
   <table id="board"></table>
 
   <div id='control_panel'>
     <button id='step_btn' class='btn btn-success'>Step</button>
-    <input id='step_amount' placeholder="Auto Play Speed (ms) " value='600'>
+    <input id='step_amount' placeholder="Auto Play Speed (ms) " value='100'>
     <button id='play_btn' class='btn btn-primary'>Play</button>
     <button id='reset_btn' class='btn btn-warning'>Reset Random</button>
     <button id='clear_btn' class='btn btn-info'>Clear</button>
@@ -33,7 +33,7 @@
     </div>
   </footer>
 
-  <script src="game.js"></script>
+  <script src="game.js" defer></script>
 
 </body>
 </html>
