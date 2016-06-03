@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/Octowl/GrainsOfLife/issues"
   },
-  "homepage": "https://github.com/Octowl/GrainsOfLife#readme"
+  "homepage": "https://github.com/Octowl/GrainsOfLife#readme",
+  "dependencies": {
+    "timbre": "^14.11.25"
+  }
 }
