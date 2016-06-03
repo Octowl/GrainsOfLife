@@ -1,6 +1,6 @@
 var gameOfLife = {
-  width: 24,
-  height: 24,
+  width: 50,
+  height: 50,
   stepInterval: null,
   autoPlayOn: false,
   setIntervalID: 0,
@@ -81,6 +81,20 @@ var gameOfLife = {
     // cell00.onclick = onCellClick;
   },
 
+  sound: function(sines, interval) {
+      //sines.forEach(function(sine){
+          T("perc", {r:interval-10}, sines).on("ended", function() {
+              this.pause();
+          }).bang().play();
+      //});
+  },
+
+  makeSine: function(cell) {
+      var freq = 100 + (cell.x/this.height) * 4000;
+      var amplitude = cell.y/this.width;
+      return T("sin", {freq:freq, mul:amplitude});
+  },
+
   step: function () {
     // Here is where you want to loop through all the cells
     // on the board and determine, based on it's neighbors,
@@ -101,6 +115,7 @@ var gameOfLife = {
     // (x-1, y+1), ( x , y+1), (x+1, y+1)
     //
     //
+    var self = this;
     var start = Date.now(),
         cells = [],
         boardWidth = this.width,
@@ -120,11 +135,15 @@ var gameOfLife = {
       }
       cells.push(cellObj)
     })
+
+    var sines = [];
+
     cells.forEach(function (cellObj) {
       if (cellObj.status === 'alive') {
         if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
           cellObj.cell.click()
         }
+        sines.push(self.makeSine(cellObj));
       }
       if (cellObj.status === 'dead') {
         if (cellObj.aliveCount === 3) {
@@ -132,7 +151,8 @@ var gameOfLife = {
         }
       }
     })
-    console.log(Date.now() - start + ' ms')
+    self.sound(sines, document.getElementById('step_amount').value);
+    // console.log(Date.now() - start + ' ms')
   },
 
   enableAutoPlay: function () {
