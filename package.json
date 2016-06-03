@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "start": "echo 'please select start file'",
+    "start": "nodemon server.js",
     "test": "nodemon -x mocha ./tests/index.spec.js"
   },
   "repository": {
@@ -13,6 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "nodemon": "^1.9.2"
   },
   "devDependencies": {

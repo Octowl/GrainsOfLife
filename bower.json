@@ -1,0 +1,27 @@
+{
+  "name": "grains-of-life",
+  "description": "",
+  "main": "",
+  "authors": [
+    "thejohnbackes <jbackes@thisismotive.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Octowl/GrainsOfLife",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-slider": "*",
+    "angular": "^1.5.6",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.4"
+  }
+}

@@ -4,14 +4,25 @@
 <head>
   <meta charset="utf-8">
   <title>Grains of Life</title>
-  <script src="node_modules/angular/angular.js" defer></script>
-  <script src="table/module.js" defer></script>
-  <script src="table/table.directive.js" defer></script>
-  <link rel="stylesheet" href="libraries/bootstrap.min.css">
-  <link rel="stylesheet" href="game.css">
+  <!-- === client app === -->
+    <script src="app/module.js" defer></script>
+    <script src="app/components/game/grid/table.directive.js" defer></script>
+    <link rel="stylesheet" href="files/css/game.css">
+
+  <!-- === dependencies === --->
+    <!-- angular -->
+      <script src="files/angular/angular.js"></script>
+    <!-- jquery -->
+      <script src="files/jquery/dist/jquery.js"></script>
+    <!-- bootstrap -->
+      <link rel="stylesheet" href="files/bootstrap/css/bootstrap.css">
+      <script src="files/bootstrap/js/bootstrap.js" defer></script>
+      <!-- bootstrap slider -->
+        <link rel="stylesheet" href="files/bootstrap/slider/slider.css" />
+        <script src="files/bootstrap/slider/bootstrap-slider.js" defer />
 </head>
 
-<body>
+<body ng-app="game" ng-controller="app">
   <h2>Game of Life</h2>
   <table id='board'><board></board></table>
 
