@@ -16,7 +16,8 @@
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
-    "nodemon": "^1.9.2"
+    "nodemon": "^1.9.2",
+    "timbre": "^14.11.25"
   },
   "devDependencies": {
     "mocha": "^2.5.3",
@@ -25,8 +26,5 @@
   "bugs": {
     "url": "https://github.com/Octowl/GrainsOfLife/issues"
   },
-  "homepage": "https://github.com/Octowl/GrainsOfLife#readme",
-  "dependencies": {
-    "timbre": "^14.11.25"
-  }
+  "homepage": "https://github.com/Octowl/GrainsOfLife#readme"
 }

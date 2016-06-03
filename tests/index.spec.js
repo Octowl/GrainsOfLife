@@ -43,6 +43,7 @@ xdescribe("Grains of Life", function(){
       it("controls height")
       it("controls wave function")
       it("controls the playback speed")
+      it("allows user to choose waveform")
     })
     describe("Audio Output", function () {
       it("uses web audio api")
