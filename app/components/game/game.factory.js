@@ -1,4 +1,16 @@
-game.factory('gameFactory',function(){
+
+
+
+var color = null
+
+var synth = T("OscGen", (T("reverb", {
+        room: 0.95,
+        damp: 0.1,
+        mix: 0.75
+    }, T("sin", {mul:0.25})))).play();
+
+
+game.factory('gameFactory',['synthFactory', function(synth){
   return {
       width: 50,
       height: 50,
@@ -8,22 +20,22 @@ game.factory('gameFactory',function(){
 
       createAndShowBoard: function () {
         // create <table> element
-        var goltable = document.createElement("tbody");
+        // var goltable = document.createElement("tbody");
 
-        // build Table HTML
-        var tablehtml = '';
-        for (var h=0; h<this.height; h++) {
-          tablehtml += "<tr id='row+" + h + "'>";
-          for (var w=0; w<this.width; w++) {
-            tablehtml += "<td data-status='dead' id='" + w + "-" + h + "'></td>";
-          }
-          tablehtml += "</tr>";
-        }
-        goltable.innerHTML = tablehtml;
+        // // build Table HTML
+        // var tablehtml = '';
+        // for (var h = 0; h < this.height; h++) {
+        //     tablehtml += "<tr id='row+" + h + "'>";
+        //     for (var w = 0; w < this.width; w++) {
+        //         tablehtml += "<td data-status='dead' id='" + w + "-" + h + "'></td>";
+        //     }
+        //     tablehtml += "</tr>";
+        // }
+        // goltable.innerHTML = tablehtml;
 
-        // add table to the #board element
-        var board = document.getElementById('board');
-        board.appendChild(goltable);
+        // // add table to the #board element
+        // var board = document.getElementById('board');
+        // board.appendChild(goltable);
 
         // once html elements are added to the page, attach events to them
         this.setupBoardEvents();
@@ -39,10 +51,10 @@ game.factory('gameFactory',function(){
         var board = document.getElementById('board').firstChild
         Array.prototype.slice.call(board.children).forEach(function (row) {
           Array.prototype.slice.call(row.children).forEach(function (cell) {
-            var coords = cell.id.split("-")
-            var x = parseInt(coords[0])
-            var y = parseInt(coords[1])
-            iteratorFunc(cell, x, y)
+              var coords = cell.id.split("-")
+              var x = parseInt(coords[0])
+              var y = parseInt(coords[1])
+              iteratorFunc(cell, x, y)
           })
         })
 
@@ -68,35 +80,51 @@ game.factory('gameFactory',function(){
 
           // how to set the style of the cell when it's clicked
           if (this.getAttribute('data-status') == 'dead') {
-            this.className = "alive";
-            this.setAttribute('data-status', 'alive');
+              this.className = "alive";
+              this.setAttribute('data-status', 'alive');
+              this.setAttribute('style', 'background-color:' + color)
+              // console.log(color)
           } else {
-            this.className = "dead";
-            this.setAttribute('data-status', 'dead');
+              this.className = "dead";
+              this.setAttribute('data-status', 'dead');
+              this.setAttribute('style', 'background-color:#FFFFFF')
           }
         };
         this.forEachCell(function (cell) {
           cell.onclick = onCellClick
-        })
-        // var cell00 = document.getElementById('0-0');
-        // cell00.onclick = onCellClick;
-      },
+      })
+      // var cell00 = document.getElementById('0-0');
+      // cell00.onclick = onCellClick;
+},
 
-      sound: function(sines, interval) {
-          //sines.forEach(function(sine){
-              T("perc", {r:interval-10}, sines).on("ended", function() {
-                  this.pause();
-              }).bang().play();
-          //});
-      },
+// sound: function (sines, interval) {
+//     var env = T("adsr", {
+//         d: 3000,
+//         s: 0,
+//         r: 600
+//     });
+//
+//     T("perc", {
+//         r: interval * 0.5
+//     }, T("reverb", {
+//         room: 0.95,
+//         damp: 0.1,
+//         mix: 0.75
+//     }, sines)).on("ended", function () {
+//         this.pause();
+//     }).bang().play();
+// },
 
-      makeSine: function(cell) {
-          var freq = 100 + (cell.x/this.height) * 4000;
-          var amplitude = cell.y/this.width;
-          return T("sin", {freq:freq, mul:amplitude});
-      },
+// makeSine: function (cell) {
+//     return T("saw", {
+//         freq: pentatonicFrequencies[freq],
+//         mul: amplitude
+//     });
+// },
 
-      step: function () {
+step: function () {
+  color = '#'+Math.floor(Math.random()*16777215).toString(16)
+  // console.log(this.color)
         // Here is where you want to loop through all the cells
         // on the board and determine, based on it's neighbors,
         // whether the cell should be dead or alive in the next
@@ -121,40 +149,41 @@ game.factory('gameFactory',function(){
             cells = [],
             boardWidth = this.width,
             boardHeight = this.height
-        this.forEachCell(function (cell, x, y) {
-          var cellObj = new Cell(cell, x, y, cell.dataset.status, 0, 0)
-          for(var i = cellObj.x-1; i < cellObj.x + 2; i++) {
-            // if (i < 0 || i > boardWidth - 1) continue
-            var col = i < 0 ? boardWidth - 1 : i % boardWidth
-            for(var j = cellObj.y-1; j < cellObj.y + 2; j++) {
-              if(i === cellObj.x && j === cellObj.y) continue
-              var row = j < 0 ? boardHeight - 1 : j % boardHeight
-              var currCell = document.getElementById(col + '-' + row)
-              if (currCell.dataset.status === 'alive') cellObj.aliveCount++
-              if (currCell.dataset.status === 'dead') cellObj.deadCount++
-            }
-          }
-          cells.push(cellObj)
+            this.forEachCell(function (cell, x, y) {
+                // console.log(cell)
+                var cellObj = document.getElementById(x + '-' + y);
+                for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
+                    // if (i < 0 || i > boardWidth - 1) continue
+                    var col = i < 0 ? boardWidth - 1 : i % boardWidth
+                    for (var j = cellObj.y - 1; j < cellObj.y + 2; j++) {
+                        if (i === cellObj.x && j === cellObj.y) continue
+                        var row = j < 0 ? boardHeight - 1 : j % boardHeight
+                        var currCell = document.getElementById(col + '-' + row)
+                        if (currCell.dataset.status === 'alive') cellObj.aliveCount++
+                            if (currCell.dataset.status === 'dead') cellObj.deadCount++
+                    }
+              }
+              cells.push(cellObj)
+
         })
 
         var sines = [];
 
         cells.forEach(function (cellObj) {
-          if (cellObj.status === 'alive') {
-            if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
-              cellObj.cell.click()
+            if (cellObj.status === 'alive') {
+                if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
+                    cellObj.cell.click()
+                }
+                synth.noteOnWithFreq(cellObj.freq, cellObj.velocity);
             }
-            sines.push(self.makeSine(cellObj));
-          }
-          if (cellObj.status === 'dead') {
-            if (cellObj.aliveCount === 3) {
-              cellObj.cell.click()
+            if (cellObj.status === 'dead') {
+                if (cellObj.aliveCount === 3) {
+                    cellObj.cell.click()
+                }
+                synth.noteOffWithFreq(cellObj.freq);
             }
-          }
         })
-        self.sound(sines, document.getElementById('step_amount').value);
-        // console.log(Date.now() - start + ' ms')
-      },
+    },
 
       enableAutoPlay: function () {
         // Start Auto-Play by running the 'step' function
@@ -191,5 +220,5 @@ game.factory('gameFactory',function(){
 
       }
     };
-  }
+  }]
 )

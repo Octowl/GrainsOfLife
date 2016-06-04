@@ -15,9 +15,9 @@ h1, h2 {
   height: 18px;
 }
 
-td.alive {
+/*td.alive {
   background-color: #8CC8DD;
-}
+}*/
 
 td.dead {
   background-color: #fff;

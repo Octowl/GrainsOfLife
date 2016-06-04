@@ -23,13 +23,14 @@
     <script src="app/module.js" defer></script>
     <script src="app/app.controller.js" defer></script>
     <script src="app/components/game/game.factory.js" defer></script>
-    <script src="app/components/game/grid/table.directive.js" defer></script>
     <script src="app/components/game/grid/cell/cell.factory.js" defer></script>
     <script src="app/components/game/controls/buttons/button.directives.js" defer></script>
     <script src="app/components/game/grid/grid.directive.js" defer></script>
     <script src="app/components/game/controls/controlPanel/controlPanel.directive.js" defer></script>
+    <script src="app/components/game/grid/cell/row.directive.js" defer></script>
     <link rel="stylesheet" href="files/css/game.css">
     <!-- <script src="app/game.js" defer></script> -->
+    <script src="app/components/game/synth/synth.factory.js" defer></script>
 
 </head>
 
@@ -48,6 +49,15 @@
     </div>
   </footer>
 
+  <script>
+    document.styleSheets[1]
+            .insertRule(
+              'td.alive' +
+              ' {'+'background-color'+':'+
+              '#' + Math.floor(Math.random()*16777215)
+                        .toString(16) +
+              '}', 0)
+  </script>
 
 
 </body>
