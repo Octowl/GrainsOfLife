@@ -317,6 +317,6 @@ function Cell(cell, x, y, status, deadCount, aliveCount, height, width) {
     this.status = status
     this.deadCount = deadCount
     this.aliveCount = aliveCount
-    this.freq = wholeToneFrequencies[x % wholeToneFrequencies.length];
+    this.freq = pentatonicFrequencies[x % pentatonicFrequencies.length];
     this.velocity = 1000* (y /  width);
 }
