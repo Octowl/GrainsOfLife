@@ -15,13 +15,28 @@ game.directive("pause", function(){
   }
 })
 
-game.directive("play", function(){
+game.directive("play", ['stepFactory', function(stepFn){
   return {
     restrict: "E",
     replace: true,
-    template: "<button id='play_btn' class='btn btn-primary'>Play</button>"
+    template: `<button id='play_btn' class='btn btn-primary' ng-click="enableAutoPlay()">Play</button>`,
+    link: function(scope, playBtn){
+      scope.autoPlayOn = false;
+      scope.enableAutoPlay = function(){
+        if (scope.autoPlayOn) {
+          scope.autoPlayOn = false
+          clearInterval(scope.setIntervalID)
+          playBtn[0].innerHTML = 'Play'
+        } else {
+          debugger;
+          scope.autoPlayOn = true
+          scope.setIntervalID = setInterval(stepFn.bind(scope), document.getElementById('step_amount').value || 100)
+          playBtn[0].innerHTML = 'Pause'
+        }
+      }
+    }
   }
-})
+}])
 
 game.directive("reset", function(){
   return {

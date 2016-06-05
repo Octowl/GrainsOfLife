@@ -10,10 +10,11 @@ var synth = T("OscGen", (T("reverb", {
     }, T("sin", {mul:0.25})))).play();
 
 
-game.factory('gameFactory',['synthFactory', function(synth){
+game.factory('gameFactory',['synthFactory', 'stepFactory', 'forEachCell', function(synth, step, forEachCell){
   return {
       width: 50,
       height: 50,
+      cellCount: this.width * this.height,
       stepInterval: null,
       autoPlayOn: false,
       setIntervalID: 0,
@@ -41,24 +42,24 @@ game.factory('gameFactory',['synthFactory', function(synth){
         this.setupBoardEvents();
       },
 
-      forEachCell: function (iteratorFunc) {
-        /*
-          Write forEachCell here. You will have to visit
-          each cell on the board, call the "iteratorFunc" function,
-          and pass into func, the cell and the cell's x & y
-          coordinates. For example: iteratorFunc(cell, x, y)
-        */
-        var board = document.getElementById('board').firstChild
-        Array.prototype.slice.call(board.children).forEach(function (row) {
-          Array.prototype.slice.call(row.children).forEach(function (cell) {
-              var coords = cell.id.split("-")
-              var x = parseInt(coords[0])
-              var y = parseInt(coords[1])
-              iteratorFunc(cell, x, y)
-          })
-        })
-
-      },
+      // forEachCell: function (iteratorFunc) {
+      //   /*
+      //     Write forEachCell here. You will have to visit
+      //     each cell on the board, call the "iteratorFunc" function,
+      //     and pass into func, the cell and the cell's x & y
+      //     coordinates. For example: iteratorFunc(cell, x, y)
+      //   */
+      //   var board = document.getElementById('board').firstChild
+      //   Array.prototype.slice.call(board.children).forEach(function (row) {
+      //     Array.prototype.slice.call(row.children).forEach(function (cell) {
+      //         var coords = cell.id.split("-")
+      //         var x = parseInt(coords[0])
+      //         var y = parseInt(coords[1])
+      //         iteratorFunc(cell, x, y)
+      //     })
+      //   })
+      //
+      // },
 
       setupBoardEvents: function() {
         // each board cell has an CSS id in the format of: "x-y"
@@ -90,7 +91,7 @@ game.factory('gameFactory',['synthFactory', function(synth){
               this.setAttribute('style', 'background-color:#FFFFFF')
           }
         };
-        this.forEachCell(function (cell) {
+        forEachCell(function (cell) {
           cell.onclick = onCellClick
       })
       // var cell00 = document.getElementById('0-0');
@@ -122,92 +123,93 @@ game.factory('gameFactory',['synthFactory', function(synth){
 //     });
 // },
 
-step: function () {
-  color = '#'+Math.floor(Math.random()*16777215).toString(16)
-  // console.log(this.color)
-        // Here is where you want to loop through all the cells
-        // on the board and determine, based on it's neighbors,
-        // whether the cell should be dead or alive in the next
-        // evolution of the game.
-        //
-        // You need to:
-        // 1. Count alive neighbors for all cells
-        // 2. Set the next state of all cells based on their alive neighbors
-        // (x, y) -> (1, 1)
-        // check:
-        //   (0, 0)  ,   (1, 0)  ,   (2, 0)
-        //   (0, 1)  ,           ,   (2, 1)
-        //   (0, 2)  ,   (1, 2)  ,   (2, 2)
-        //
-        // (x-1, y-1), ( x , y-1), (x+1, y-1)
-        // (x-1,  y ), ( x ,  y ), (x+1,  y )
-        // (x-1, y+1), ( x , y+1), (x+1, y+1)
-        //
-        //
-        var self = this;
-        var start = Date.now(),
-            cells = [],
-            boardWidth = this.width,
-            boardHeight = this.height
-            this.forEachCell(function (cell, x, y) {
-                // console.log(cell)
-                var cellObj = document.getElementById(x + '-' + y);
-                for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
-                    // if (i < 0 || i > boardWidth - 1) continue
-                    var col = i < 0 ? boardWidth - 1 : i % boardWidth
-                    for (var j = cellObj.y - 1; j < cellObj.y + 2; j++) {
-                        if (i === cellObj.x && j === cellObj.y) continue
-                        var row = j < 0 ? boardHeight - 1 : j % boardHeight
-                        var currCell = document.getElementById(col + '-' + row)
-                        if (currCell.dataset.status === 'alive') cellObj.aliveCount++
-                            if (currCell.dataset.status === 'dead') cellObj.deadCount++
-                    }
-              }
-              cells.push(cellObj)
+step: step,
+// step: function () {
+//   color = '#'+Math.floor(Math.random()*16777215).toString(16)
+//   // console.log(this.color)
+//         // Here is where you want to loop through all the cells
+//         // on the board and determine, based on it's neighbors,
+//         // whether the cell should be dead or alive in the next
+//         // evolution of the game.
+//         //
+//         // You need to:
+//         // 1. Count alive neighbors for all cells
+//         // 2. Set the next state of all cells based on their alive neighbors
+//         // (x, y) -> (1, 1)
+//         // check:
+//         //   (0, 0)  ,   (1, 0)  ,   (2, 0)
+//         //   (0, 1)  ,           ,   (2, 1)
+//         //   (0, 2)  ,   (1, 2)  ,   (2, 2)
+//         //
+//         // (x-1, y-1), ( x , y-1), (x+1, y-1)
+//         // (x-1,  y ), ( x ,  y ), (x+1,  y )
+//         // (x-1, y+1), ( x , y+1), (x+1, y+1)
+//         //
+//         //
+//         var self = this;
+//         var start = Date.now(),
+//             cells = [],
+//             boardWidth = this.width,
+//             boardHeight = this.height
+//             this.forEachCell(function (cell, x, y) {
+//                 // console.log(cell)
+//                 var cellObj = document.getElementById(x + '-' + y);
+//                 for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
+//                     // if (i < 0 || i > boardWidth - 1) continue
+//                     var col = i < 0 ? boardWidth - 1 : i % boardWidth
+//                     for (var j = cellObj.y - 1; j < cellObj.y + 2; j++) {
+//                         if (i === cellObj.x && j === cellObj.y) continue
+//                         var row = j < 0 ? boardHeight - 1 : j % boardHeight
+//                         var currCell = document.getElementById(col + '-' + row)
+//                         if (currCell.dataset.status === 'alive') cellObj.aliveCount++
+//                             if (currCell.dataset.status === 'dead') cellObj.deadCount++
+//                     }
+//               }
+//               cells.push(cellObj)
+//
+//         })
+//
+//         var sines = [];
+//
+//         cells.forEach(function (cellObj) {
+//             if (cellObj.status === 'alive') {
+//                 if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
+//                     cellObj.cell.click()
+//                 }
+//                 synth.noteOnWithFreq(cellObj.freq, cellObj.velocity);
+//             }
+//             if (cellObj.status === 'dead') {
+//                 if (cellObj.aliveCount === 3) {
+//                     cellObj.cell.click()
+//                 }
+//                 synth.noteOffWithFreq(cellObj.freq);
+//             }
+//         })
+//     },
 
-        })
-
-        var sines = [];
-
-        cells.forEach(function (cellObj) {
-            if (cellObj.status === 'alive') {
-                if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
-                    cellObj.cell.click()
-                }
-                synth.noteOnWithFreq(cellObj.freq, cellObj.velocity);
-            }
-            if (cellObj.status === 'dead') {
-                if (cellObj.aliveCount === 3) {
-                    cellObj.cell.click()
-                }
-                synth.noteOffWithFreq(cellObj.freq);
-            }
-        })
-    },
-
-      enableAutoPlay: function () {
-        // Start Auto-Play by running the 'step' function
-        // automatically repeatedly every fixed time interval
-        if (this.autoPlayOn) {
-          this.autoPlayOn = false
-          clearInterval(this.setIntervalID)
-          document.getElementById('play_btn').innerHTML = 'Play'
-        } else {
-          this.autoPlayOn = true
-          this.setIntervalID = setInterval(this.step.bind(this), document.getElementById('step_amount').value || 100)
-          document.getElementById('play_btn').innerHTML = 'Pause'
-        }
-      },
+      // enableAutoPlay: function () {
+      //   // Start Auto-Play by running the 'step' function
+      //   // automatically repeatedly every fixed time interval
+      //   if (this.autoPlayOn) {
+      //     this.autoPlayOn = false
+      //     clearInterval(this.setIntervalID)
+      //     document.getElementById('play_btn').innerHTML = 'Play'
+      //   } else {
+      //     this.autoPlayOn = true
+      //     this.setIntervalID = setInterval(this.step.bind(this), document.getElementById('step_amount').value || 100)
+      //     document.getElementById('play_btn').innerHTML = 'Pause'
+      //   }
+      // },
 
       clear: function () {
-        this.forEachCell(function(cell) {
+        forEachCell(function(cell) {
           cell.className = "dead";
           cell.setAttribute('data-status', 'dead');
         })
       },
 
       randomize: function () {
-        this.forEachCell(function (cell, x, y) {
+        forEachCell(function (cell, x, y) {
           var state = Math.floor(Math.random() * 2)
           if (state === 1) {
             cell.className = "dead"
@@ -222,3 +224,114 @@ step: function () {
     };
   }]
 )
+
+game.factory('cellStepFactory', [function(){
+  return function(cell){
+    let color = '#'+Math.floor(Math.random()*16777215).toString(16);
+    let self = cell;
+
+  }
+}])
+
+game.factory('stepFactory', ['forEachCell', '$rootScope', function(forEachCell, rootScope){
+  let state = 0;
+  return function () {
+    rootScope.$broadcast('step', state++);
+    color = '#'+Math.floor(Math.random()*16777215).toString(16)
+    // console.log(this.color)
+          // Here is where you want to loop through all the cells
+          // on the board and determine, based on it's neighbors,
+          // whether the cell should be dead or alive in the next
+          // evolution of the game.
+          //
+          // You need to:
+          // 1. Count alive neighbors for all cells
+          // 2. Set the next state of all cells based on their alive neighbors
+          // (x, y) -> (1, 1)
+          // check:
+          //   (0, 0)  ,   (1, 0)  ,   (2, 0)
+          //   (0, 1)  ,           ,   (2, 1)
+          //   (0, 2)  ,   (1, 2)  ,   (2, 2)
+          //
+          // (x-1, y-1), ( x , y-1), (x+1, y-1)
+          // (x-1,  y ), ( x ,  y ), (x+1,  y )
+          // (x-1, y+1), ( x , y+1), (x+1, y+1)
+          //
+          //
+          var self = this;
+          var start = Date.now(),
+              cells = [],
+              boardWidth = this.width,
+              boardHeight = this.height
+              forEachCell(function (cell, x, y) {
+                  // console.log(cell)
+                  var cellObj = document.getElementById(x + '-' + y);
+                  for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
+                      // if (i < 0 || i > boardWidth - 1) continue
+                      var col = i < 0 ? boardWidth - 1 : i % boardWidth
+                      for (var j = cellObj.y - 1; j < cellObj.y + 2; j++) {
+                          if (i === cellObj.x && j === cellObj.y) continue
+                          var row = j < 0 ? boardHeight - 1 : j % boardHeight
+                          var currCell = document.getElementById(col + '-' + row)
+                          if (currCell.dataset.status === 'alive') cellObj.aliveCount++
+                              if (currCell.dataset.status === 'dead') cellObj.deadCount++
+                      }
+                }
+                cells.push(cellObj)
+
+          })
+
+          var sines = [];
+
+          cells.forEach(function (cellObj) {
+              if (cellObj.status === 'alive') {
+                  if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
+                      cellObj.cell.click()
+                  }
+                  synth.noteOnWithFreq(cellObj.freq, cellObj.velocity);
+              }
+              if (cellObj.status === 'dead') {
+                  if (cellObj.aliveCount === 3) {
+                      cellObj.cell.click()
+                  }
+                  synth.noteOffWithFreq(cellObj.freq);
+              }
+          })
+      };
+}])
+
+game.factory('forEachCell', function(){
+  return function (iteratorFunc) {
+    /*
+      Write forEachCell here. You will have to visit
+      each cell on the board, call the "iteratorFunc" function,
+      and pass into func, the cell and the cell's x & y
+      coordinates. For example: iteratorFunc(cell, x, y)
+    */
+    var board = document.getElementById('board').firstChild
+    Array.prototype.slice.call(board.children).forEach(function (row) {
+      Array.prototype.slice.call(row.children).forEach(function (cell) {
+          var coords = cell.id.split("-")
+          var x = parseInt(coords[0])
+          var y = parseInt(coords[1])
+          iteratorFunc(cell, x, y)
+      })
+    })
+
+  }
+})
+
+game.factory('cellClickFactory', function(){
+  return function(scope, element, attrs){
+    if (scope.status == 'dead') {
+        element.className = "alive";
+        element.setAttribute('status', 'alive');
+        element.setAttribute('style', 'background-color:' + color)
+        // console.log(color)
+    } else {
+        element.className = "dead";
+        element.setAttribute('data-status', 'dead');
+        element.setAttribute('style', 'background-color:#FFFFFF')
+    }
+  };
+})

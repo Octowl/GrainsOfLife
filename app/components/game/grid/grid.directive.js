@@ -5,7 +5,6 @@ game.directive('gameGrid',['cell', function(Cell){
     template: `<table id="board"><tbody><tr row={{$index}} ng-repeat="row in rows track by $index"></tr></tbody></table>`,
     replace: true,
     link: function(scope){
-      debugger;
       scope.rows = makeRows(50, 50, Cell)
     }
   }
