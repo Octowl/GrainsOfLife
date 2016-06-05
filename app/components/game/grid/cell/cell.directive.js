@@ -1,5 +1,5 @@
 'use strict';
-game.directive('cell', ['cellClickFactory', '$log', function(cellClick, $log){
+game.directive('cell', ['cellClickFactory', '$log', 'cellFactory', 'gameFactory', function(cellClick, $log, cellFactory, gameFactory){
   return {
     restrict: 'E',
     template: `<td cell={{$parent.$index}} id="{{$parent.$index}}-{{$parent.$parent.$index}}" status="dead" ng-click="toggleStatus()"></td>`,
@@ -8,10 +8,13 @@ game.directive('cell', ['cellClickFactory', '$log', function(cellClick, $log){
       "status": '@',
     },
     link: function(scope, cell, attrs){
-      scope.$on('step', function(){
-        console.log('stepping');
+      let DOMcell = cell[0];
+      scope.cellObj = new cellFactory(DOMcell, scope.$parent.$parent.index, scope.$parent.$index,  gameFactory.cellCount, gameFactory.height, gameFactory.width, scope);
+      let cellObj = scope.cellObj;
+      scope.$on('step', function(previousStep, nextStep){
+        cellObj.checkNeighbors(previousStep)
       })
-      scope.toggleStatus = function(){cellClick(scope, cell[0], attrs)}
+      scope.toggleStatus = function(){cellClick(scope, cell[0], attrs)};
     }
   }
 }])

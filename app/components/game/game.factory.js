@@ -18,6 +18,7 @@ game.factory('gameFactory',['synthFactory', 'stepFactory', 'forEachCell', functi
       stepInterval: null,
       autoPlayOn: false,
       setIntervalID: 0,
+      currentStep: 0,
 
       createAndShowBoard: function () {
         // create <table> element
@@ -233,8 +234,8 @@ game.factory('cellStepFactory', [function(){
   }
 }])
 
-game.factory('stepFactory', ['forEachCell', '$rootScope', function(forEachCell, rootScope){
-  let state = 0;
+game.factory('stepFactory', ['forEachCell', '$rootScope', 'gameFactory', function(forEachCell, rootScope, gameOfLife){
+  let state = gameOfLife.currentStep;
   return function () {
     rootScope.$broadcast('step', state++);
     color = '#'+Math.floor(Math.random()*16777215).toString(16)
