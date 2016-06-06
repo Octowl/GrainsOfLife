@@ -9,12 +9,15 @@ game.directive('cell', ['cellClickFactory', '$log', 'cellFactory', 'gameFactory'
     },
     link: function(scope, cell, attrs){
       let DOMcell = cell[0];
-      scope.cellObj = new cellFactory(DOMcell, scope.$parent.$parent.index, scope.$parent.$index,  gameFactory.cellCount, gameFactory.height, gameFactory.width, scope);
+      scope.cellObj = new cellFactory(DOMcell, scope.$parent.$index, scope.$parent.$parent.$index, 'dead', gameFactory.cellCount, 0, gameFactory.height, gameFactory.width, scope);
       let cellObj = scope.cellObj;
-      scope.$on('step', function(previousStep, nextStep){
-        cellObj.checkNeighbors(previousStep)
+      scope.$on('step', function(e, previousStep, nextStep){
+        cellObj.makeAliveOrDead(previousStep)
       })
-      scope.toggleStatus = function(){cellClick(scope, cell[0], attrs)};
+      scope.toggleStatus = function(){
+        //cellClick(scope, cell[0], attrs)
+        cellObj.click();
+      };
     }
   }
 }])

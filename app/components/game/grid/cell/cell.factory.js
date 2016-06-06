@@ -47,7 +47,13 @@ var pentatonicFrequencies = [
     7040*/
 ];
 
-var Cell = class {
+game.factory('cellFactory', function(gameFactory, synthFactory){
+
+/**
+ * [Cell constructor]
+ * @type {[type]}
+ */
+const Cell = class {
   constructor(cell, x, y, status, deadCount, aliveCount, height, width, scope) {
     this.cell = cell;
     this.scope = scope;
@@ -58,7 +64,7 @@ var Cell = class {
     this.deadCount = deadCount
     this.aliveCount = aliveCount
     this.freq = pentatonicFrequencies[x % pentatonicFrequencies.length];
-    this.velocity = 1000* (y /  width);
+    this.velocity = 500* (y /  width);
     this.parent = {height, width}
   }
   generateFrequency(){}
@@ -66,54 +72,113 @@ var Cell = class {
   get neighbors(){
     let x = this.x, y = this.y;
     let neighbors = [
-      Cell.getNeighbor(x-1, y-1, parent),
-      Cell.getNeighbor(x  , y-1, parent),
-      Cell.getNeighbor(x+1, y-1, parent),
-      Cell.getNeighbor(x-1, y  , parent),
-      Cell.getNeighbor(x+1, y  , parent),
-      Cell.getNeighbor(x-1, y+1, parent),
-      Cell.getNeighbor(x  , y+1, parent),
-      Cell.getNeighbor(x+1, y+1, parent)
+      Cell.getNeighbor(x-1, y-1, this.parent),
+      Cell.getNeighbor(x  , y-1, this.parent),
+      Cell.getNeighbor(x+1, y-1, this.parent),
+      Cell.getNeighbor(x-1, y  , this.parent),
+      Cell.getNeighbor(x+1, y  , this.parent),
+      Cell.getNeighbor(x-1, y+1, this.parent),
+      Cell.getNeighbor(x  , y+1, this.parent),
+      Cell.getNeighbor(x+1, y+1, this.parent)
     ];
+    return neighbors;
   }
   static getNeighbor(x, y, parent){
-    return x < 0 || x >= parent.width || y < 0 || y <= parent.height ? null : document.getElementById( x+'-'+y ).scope.cellObj;
+    if( x < 0 ) x = parent.width-1;
+    if( x >= parent.width ) x = 0;
+    if( y < 0 ) y = parent.height-1;
+    if( y >= parent.height ) y = 0;
+    if( x<0 ||
+        x >= parent.width ||
+        y <0 ||
+        y >= parent.height ) {
+          return null
+        } else {
+          let cellToReturn = Cell.getCell(x, y);
+          let toReturn = cellToReturn.scope().$$childHead.cellObj;
+          return toReturn;
+        }
+    // return x < 0 || x >= parent.width || y < 0 || y >= parent.height ? null : document.getElementById( x+'-'+y ).scope.cellObj;
   }
+  static getCell(x, y){
+    return angular.element(document.getElementById( x + '-' + y ))
+  }
+  /**
+   * [checkNeighbors returns the number of alive neighbors for a cell]
+   * @param  {[integer]} step [step should be the previous step during a step event]
+   * @return {[integer]}      [the number of alive neighbors]
+   */
   checkNeighbors(step){
-    return this.neighbors.reduce( (stateCount, neighbors) => stateCount + neighbor.states[step] === 'alive' ? 1 : 0, 0)
+    debugger;
+    let aliveNeighbors = 0;
+    this.neighbors.forEach( function(neighbor){
+      if(!!neighbor && neighbor.states[step] === 'alive'){
+        aliveNeighbors++
+      }
+    })
+    return aliveNeighbors;
   }
   makeAliveOrDead(step){
     let neighborCount = this.checkNeighbors(step);
     if(this.isAlive(step)){
+      synthFactory.noteOnWithFreq(this.freq, this.velocity);
       if(neighborCount < 2 || neighborCount > 3) {
         this.makeDead();
       }
     }
     else{
+      synthFactory.noteOffWithFreq(this.freq);
       if(neighborCount === 3){
         this.makeAlive();
       }
     }
-    this.registerStatus();
+    this.registerState();
   }
-  changeColor(){}
+  changeColor(){
+    return '#'+Math.floor(Math.random()*16777215).toString(16);
+  }
   toggleState(){}
   randomState(){}
   isAlive(step = null){
     return step === null ? this.status === 'alive' : this.states[step] === 'alive';
   }
   toggleNote(){}
-  makeAlive(){
-    this.state = 'alive';
+  makeAlive(register = false){
+    debugger;
+    this.status = 'alive';
+    if(register) this.states[gameFactory.currentStep] = this.status;
+    this.cell.className = "alive";
+    this.cell.setAttribute('status', 'alive');
+    this.cell.setAttribute('style', 'background-color:' + this.changeColor())
+    // console.log(color)
   }
-  makeDead(){
-    this.state = 'dead';
+  makeDead(register = false){
+    debugger;
+    this.status = 'dead';
+    if(register) this.states[gameFactory.currentStep] = this.status;
+    this.cell.className = "dead";
+    this.cell.setAttribute('data-status', 'dead');
+    this.cell.setAttribute('style', 'background-color:#FFFFFF')
   }
   registerState(){
-    this.state.push(this.status);
+    this.states.push(this.status);
+  };
+  click(){
+    if (this.status == 'dead') {
+      this.makeAlive(true);
+        // this.cell.className = "alive";
+        // this.cell.setAttribute('status', 'alive');
+        // this.cell.setAttribute('style', 'background-color:' + color)
+        // // console.log(color)
+    } else {
+      this.makeDead(true);
+        // this.cell.className = "dead";
+        // this.cell.setAttribute('data-status', 'dead');
+        // this.cell.setAttribute('style', 'background-color:#FFFFFF')
+    }
   }
 }
 
-game.factory('cellFactory', function(){
+
   return Cell;
 });

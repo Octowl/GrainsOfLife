@@ -9,12 +9,13 @@ var synth = T("OscGen", (T("reverb", {
         mix: 0.75
     }, T("sin", {mul:0.25})))).play();
 
+// let currentStep = 0;
 
 game.factory('gameFactory',['synthFactory', 'stepFactory', 'forEachCell', function(synth, step, forEachCell){
   return {
       width: 50,
       height: 50,
-      cellCount: this.width * this.height,
+      cellCount: 2500,
       stepInterval: null,
       autoPlayOn: false,
       setIntervalID: 0,
@@ -211,13 +212,13 @@ step: step,
 
       randomize: function () {
         forEachCell(function (cell, x, y) {
+          debugger;
+          let cellObj = angular.element(document.getElementById( x + '-' + y)).scope().$$childHead.cellObj;
           var state = Math.floor(Math.random() * 2)
           if (state === 1) {
-            cell.className = "dead"
-            cell.setAttribute('data-status', 'dead');
+            cellObj.makeDead(true);
           } else {
-            cell.className = 'alive'
-            cell.setAttribute('data-status', 'alive');
+            cellObj.makeAlive(true);
           }
         })
 
@@ -234,11 +235,14 @@ game.factory('cellStepFactory', [function(){
   }
 }])
 
-game.factory('stepFactory', ['forEachCell', '$rootScope', 'gameFactory', function(forEachCell, rootScope, gameOfLife){
-  let state = gameOfLife.currentStep;
+game.factory('stepFactory', ['forEachCell', '$rootScope', function(forEachCell, rootScope){
+  let previousStep = 0;
   return function () {
-    rootScope.$broadcast('step', state++);
-    color = '#'+Math.floor(Math.random()*16777215).toString(16)
+    debugger;
+    let nextStep = previousStep+1;
+    rootScope.$broadcast('step', previousStep, nextStep);
+    previousStep++;
+    // color = '#'+Math.floor(Math.random()*16777215).toString(16)
     // console.log(this.color)
           // Here is where you want to loop through all the cells
           // on the board and determine, based on it's neighbors,
@@ -259,45 +263,45 @@ game.factory('stepFactory', ['forEachCell', '$rootScope', 'gameFactory', functio
           // (x-1, y+1), ( x , y+1), (x+1, y+1)
           //
           //
-          var self = this;
-          var start = Date.now(),
-              cells = [],
-              boardWidth = this.width,
-              boardHeight = this.height
-              forEachCell(function (cell, x, y) {
-                  // console.log(cell)
-                  var cellObj = document.getElementById(x + '-' + y);
-                  for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
-                      // if (i < 0 || i > boardWidth - 1) continue
-                      var col = i < 0 ? boardWidth - 1 : i % boardWidth
-                      for (var j = cellObj.y - 1; j < cellObj.y + 2; j++) {
-                          if (i === cellObj.x && j === cellObj.y) continue
-                          var row = j < 0 ? boardHeight - 1 : j % boardHeight
-                          var currCell = document.getElementById(col + '-' + row)
-                          if (currCell.dataset.status === 'alive') cellObj.aliveCount++
-                              if (currCell.dataset.status === 'dead') cellObj.deadCount++
-                      }
-                }
-                cells.push(cellObj)
-
-          })
-
-          var sines = [];
-
-          cells.forEach(function (cellObj) {
-              if (cellObj.status === 'alive') {
-                  if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
-                      cellObj.cell.click()
-                  }
-                  synth.noteOnWithFreq(cellObj.freq, cellObj.velocity);
-              }
-              if (cellObj.status === 'dead') {
-                  if (cellObj.aliveCount === 3) {
-                      cellObj.cell.click()
-                  }
-                  synth.noteOffWithFreq(cellObj.freq);
-              }
-          })
+          // var self = this;
+          // var start = Date.now(),
+          //     cells = [],
+          //     boardWidth = this.width,
+          //     boardHeight = this.height
+          //     forEachCell(function (cell, x, y) {
+          //         // console.log(cell)
+          //         var cellObj = document.getElementById(x + '-' + y);
+          //         for (var i = cellObj.x - 1; i < cellObj.x + 2; i++) {
+          //             // if (i < 0 || i > boardWidth - 1) continue
+          //             var col = i < 0 ? boardWidth - 1 : i % boardWidth
+          //             for (var j = cellObj.y - 1; j < cellObj.y + 2; j++) {
+          //                 if (i === cellObj.x && j === cellObj.y) continue
+          //                 var row = j < 0 ? boardHeight - 1 : j % boardHeight
+          //                 var currCell = document.getElementById(col + '-' + row)
+          //                 if (currCell.dataset.status === 'alive') cellObj.aliveCount++
+          //                     if (currCell.dataset.status === 'dead') cellObj.deadCount++
+          //             }
+          //       }
+          //       cells.push(cellObj)
+          //
+          // })
+          //
+          // var sines = [];
+          //
+          // cells.forEach(function (cellObj) {
+          //     if (cellObj.status === 'alive') {
+          //         if (cellObj.aliveCount < 2 || cellObj.aliveCount > 3) {
+          //             cellObj.cell.click()
+          //         }
+          //         synth.noteOnWithFreq(cellObj.freq, cellObj.velocity);
+          //     }
+          //     if (cellObj.status === 'dead') {
+          //         if (cellObj.aliveCount === 3) {
+          //             cellObj.cell.click()
+          //         }
+          //         synth.noteOffWithFreq(cellObj.freq);
+          //     }
+          // })
       };
 }])
 
@@ -322,6 +326,8 @@ game.factory('forEachCell', function(){
   }
 })
 
+// Cell Click Factory should be replaced by a method on the cell factory. It can be called by other factories/directives/controllers to execute a "cell click"
+//
 game.factory('cellClickFactory', function(){
   return function(scope, element, attrs){
     if (scope.status == 'dead') {

@@ -3,9 +3,7 @@
 
 var Synth = class{
   constructor(){
-    this.locals = {
-      sines: []
-    }
+    this.sines = [];
     return T("OscGen", (T("reverb", {
             room: 0.95,
             damp: 0.1,
@@ -15,9 +13,11 @@ var Synth = class{
 }
 
 function createSynth(T){
-  return Synth
+  return new Synth()
 }
 
 game.factory('synthFactory',function($window){
+  debugger;
+  var synth = createSynth($window.T);
   return createSynth($window.T);
 });
